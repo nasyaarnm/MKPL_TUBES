@@ -20,14 +20,19 @@ jobs:
 
       - name:  Memeriksa File HTML, CSS, dan JS
         run: |
-          echo "Memeriksa apakah semua file yang diperlukan ada..."
-          if [[ -f index.html && -f style.css && -f script.js ]]; then
-            echo "Semua file ada, melanjutkan ke deploy."
-          else
-            echo "File tidak lengkap. Mohon periksa."
-            exit 1
-          fi
+            echo "Memeriksa apakah semua file yang diperlukan ada..."
+            if [[ -f index.html && -f style.css && -f script.js ]]; then
+                echo "Semua file ada, melanjutkan ke deploy."
+            else
+                echo "File tidak lengkap. Mohon periksa."
+                exit 1
+            fi
 
+      - name: Menjalankan Test Unit
+        run: |
+            echo "Menjalankan tes unit..."
+            node test/script.test.js
+   
       - name:  Analisis SonarCloud
         uses: SonarSource/sonarcloud-github-action@master
         env:
@@ -59,3 +64,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./
+
+          
