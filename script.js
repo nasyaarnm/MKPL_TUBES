@@ -158,17 +158,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Handle Enter key in input fields
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('playerXInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            document.getElementById('playerOInput').focus();
+        }
+    });
+
+    document.getElementById('playerOInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            startNewGame();
+        }
+    });
+});
+
 // Initialize the game when the page loads
 initializeGame();
-
-var secret = "my-super-secret"; // penggunaan var dan hardcoded secret
-
-eval("console.log('bahaya')"); // penggunaan eval
-
-function unused() { // fungsi tidak dipakai
-    return "tidak digunakan";
-}
-
-if (gameActive = false) { // bug logika
-    console.log("Salah logika");
-}
