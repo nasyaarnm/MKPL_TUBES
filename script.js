@@ -160,3 +160,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Initialize the game when the page loads
 initializeGame();
+
+var secret = "my-super-secret"; // penggunaan var dan hardcoded secret
+
+eval("console.log('bahaya')"); // penggunaan eval
+
+function unused() { // fungsi tidak dipakai
+    return "tidak digunakan";
+}
+
+if (gameActive = false) { // bug logika
+    console.log("Salah logika");
+}
