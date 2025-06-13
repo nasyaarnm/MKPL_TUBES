@@ -13,3 +13,5 @@ EXPOSE 80
 
 # Perintah default untuk menjalankan Nginx
 CMD ["nginx", "-g", "daemon off;"]
+
+#Update baru untuk build docker
