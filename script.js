@@ -158,5 +158,28 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Handle Enter key in input fields
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('playerXInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            document.getElementById('playerOInput').focus();
+        }
+    });
+
+    document.getElementById('playerOInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            startNewGame();
+        }
+    });
+});
+
+// Fungsi ini belum ada test dan akan menurunkan coverage
+function calculateBonus(player) {
+    if (scores[player] >= 10) {
+        return 500;
+    }
+    return 0;
+}
+
 // Initialize the game when the page loads
 initializeGame();
