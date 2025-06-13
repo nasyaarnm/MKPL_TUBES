@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Tic Tac Toe</title>
+</head>
+
+<body>
+    <div class="game-container">
+        <h1>Tic Tac Toe</h1>
+
+        <div class="game-info">
+            <div class="current-player">Giliran: <span id="currentPlayer">Player X</span></div>
+        </div>
+
+        <div class="board" id="board">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+
+        <div class="game-status" id="gameStatus"></div>
+
+        <div class="controls">
+            <button onclick="showPlayerNamesModal()">New Game</button>
+            <button onclick="resetScore()">Reset Score</button>
+        </div>
+
+        <div class="score">
+            <div class="score-item">
+                <div id="playerXName">Player X</div>
+                <div class="score-number" id="scoreX">0</div>
+            </div>
+            <div class="score-item">
+                <div>Seri</div>
+                <div class="score-number" id="scoreDraw">0</div>
+            </div>
+            <div class="score-item">
+                <div id="playerOName">Player O</div>
+                <div class="score-number" id="scoreO">0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Player Names Modal -->
+    <div class="modal-overlay" id="playerNamesModal">
+        <div class="modal">
+            <h2>Masukkan Nama Pemain</h2>
+            <input type="text" id="playerXInput" placeholder="Nama Player X" maxlength="15">
+            <input type="text" id="playerOInput" placeholder="Nama Player O" maxlength="15">
+            <div class="modal-buttons">
+                <button onclick="startNewGame()">Mulai Game</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Winner Modal -->
+    <div class="modal-overlay" id="winnerModal">
+        <div class="modal">
+            <div class="winner-popup" id="winnerText">
+                Player menang! 🎉
+            </div>
+            <div class="winner-subtitle">
+                Klik di mana saja untuk melanjutkan
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
