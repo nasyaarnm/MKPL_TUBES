@@ -1,0 +1,41 @@
+name: Tic Tac Toe CI/CD Pipeline
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  integrate-test-inspect:
+    name: ⚙️ Integrasi, Tes & Inspeksi
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout Kode
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🧪 Jalankan Pengujian (Jika Ada)
+        run: |
+          echo "Tidak ada pengujian unit. Menjalankan tes manual."
+
+  deploy-to-github-pages:
+    name: 🚀 Deploy ke GitHub Pages
+    runs-on: ubuntu-latest
+    needs: integrate-test-inspect
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    steps:
+      - name: ⬇️ Checkout Kode
+        uses: actions/checkout@v4
+      
+      - name: 🌍 Deploy ke GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./ 
+
