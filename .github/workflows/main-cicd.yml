@@ -1,4 +1,5 @@
 name: Tic Tac Toe CI/CD Pipeline
+
 on:
   push:
     branches:
@@ -10,7 +11,7 @@ on:
 
 jobs:
   integrate-test-inspect:
-    name: ⚙️ Integrasi, Tes & Inspeksi
+    name: Integrasi, Tes & Inspeksi
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout Kode
@@ -18,9 +19,49 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: 🧪 Jalankan Pengujian (Jika Ada)
+      - name: Memeriksa File HTML, CSS, dan JS
         run: |
-          echo "Tidak ada pengujian unit. Menjalankan tes manual."
+          echo "Memeriksa apakah semua file yang diperlukan ada..."
+          if [[ -f index.html && -f style.css && -f script.js ]]; then
+            echo "Semua file ada, melanjutkan ke deploy."
+          else
+            echo "File tidak lengkap. Mohon periksa."
+            exit 1
+          fi
+
+      - name: Analisis SonarCloud
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+            -Dsonar.sources=.
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.exclusions=node_modules/**,**/*.test.js
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+
+  build-docker-image:
+    name: 🐳 Build Docker Image
+    runs-on: ubuntu-latest
+    needs: integrate-test-inspect
+    steps:
+      - name: ⬇️ Checkout Kode
+        uses: actions/checkout@v4
+
+      - name: 🛠️ Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🏗️ Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: local/tictactoe-cicd:latest
 
   deploy-to-github-pages:
     name: 🚀 Deploy ke GitHub Pages
@@ -32,10 +73,16 @@ jobs:
     steps:
       - name: ⬇️ Checkout Kode
         uses: actions/checkout@v4
-      
+
+      - name: 📦 Install Node (optional, only if needed)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: 🌍 Deploy ke GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./ 
-
+          publish_branch: gh-pages
+          publish_dir: ./
+          allow_empty_commit: true
