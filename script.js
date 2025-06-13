@@ -174,12 +174,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Fungsi ini belum ada test dan akan menurunkan coverage
-function calculateBonus(player) {
-    if (scores[player] >= 10) {
-        return 500;
-    }
-    return 0;
-}
+// function calculateBonus(player) {
+//     if (scores[player] >= 10) {
+//         return 500;
+//     }
+//     return 0;
+// }
 
 // Initialize the game when the page loads
 initializeGame();
