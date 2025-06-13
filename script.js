@@ -22,6 +22,54 @@ const winConditions = [
     [0, 4, 8], [2, 4, 6] // diagonals
 ];
 
+// Extracted game logic functions for better testability
+function checkWinner() {
+    return winConditions.some(condition => {
+        const [a, b, c] = condition;
+        return board[a] && board[a] === board[b] && board[a] === board[c];
+    });
+}
+
+function isValidMove(index) {
+    return board[index] === '' && gameActive;
+}
+
+function makeMove(index) {
+    if (!isValidMove(index)) {
+        return false;
+    }
+    
+    board[index] = currentPlayer;
+    return true;
+}
+
+function checkGameEnd() {
+    if (checkWinner()) {
+        return { type: 'win', player: currentPlayer };
+    }
+    
+    if (board.every(cell => cell !== '')) {
+        return { type: 'draw' };
+    }
+    
+    return { type: 'continue' };
+}
+
+function switchPlayer() {
+    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+    currentPlayerDisplay.textContent = playerNames[currentPlayer];
+}
+
+function updateUI() {
+    cells.forEach((cell, index) => {
+        cell.textContent = board[index];
+        cell.classList.remove('x', 'o');
+        if (board[index]) {
+            cell.classList.add(board[index].toLowerCase());
+        }
+    });
+}
+
 function initializeGame() {
     cells.forEach((cell, index) => {
         cell.addEventListener('click', () => handleCellClick(index));
@@ -65,36 +113,43 @@ function startNewGame() {
 }
 
 function handleCellClick(index) {
-    if (board[index] !== '' || !gameActive) {
+    if (!makeMove(index)) {
         return;
     }
 
-    board[index] = currentPlayer;
-    cells[index].textContent = currentPlayer;
-    cells[index].classList.add(currentPlayer.toLowerCase());
-
-    if (checkWinner()) {
-        gameStatus.textContent = `${playerNames[currentPlayer]} menang!`;
-        gameStatus.classList.add('winner');
-        scores[currentPlayer]++;
-        gameActive = false;
-        updateScoreDisplay();
-        showWinnerPopup();
-        return;
+    updateUI();
+    
+    const gameResult = checkGameEnd();
+    
+    switch (gameResult.type) {
+        case 'win':
+            handleWin();
+            break;
+        case 'draw':
+            handleDraw();
+            break;
+        case 'continue':
+            switchPlayer();
+            gameStatus.textContent = '';
+            break;
     }
+}
 
-    if (board.every(cell => cell !== '')) {
-        gameStatus.textContent = "Seri!";
-        scores.draw++;
-        gameActive = false;
-        updateScoreDisplay();
-        showDrawPopup();
-        return;
-    }
+function handleWin() {
+    gameStatus.textContent = `${playerNames[currentPlayer]} menang!`;
+    gameStatus.classList.add('winner');
+    scores[currentPlayer]++;
+    gameActive = false;
+    updateScoreDisplay();
+    showWinnerPopup();
+}
 
-    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-    currentPlayerDisplay.textContent = playerNames[currentPlayer];
-    gameStatus.textContent = '';
+function handleDraw() {
+    gameStatus.textContent = "Seri!";
+    scores.draw++;
+    gameActive = false;
+    updateScoreDisplay();
+    showDrawPopup();
 }
 
 function showWinnerPopup() {
@@ -109,13 +164,6 @@ function showDrawPopup() {
     winnerModal.style.display = 'flex';
 }
 
-function checkWinner() {
-    return winConditions.some(condition => {
-        const [a, b, c] = condition;
-        return board[a] && board[a] === board[b] && board[a] === board[c];
-    });
-}
-
 function resetGame() {
     board = ['', '', '', '', '', '', '', '', ''];
     currentPlayer = 'X';
@@ -124,10 +172,7 @@ function resetGame() {
     gameStatus.classList.remove('winner');
     currentPlayerDisplay.textContent = playerNames[currentPlayer];
 
-    cells.forEach(cell => {
-        cell.textContent = '';
-        cell.classList.remove('x', 'o');
-    });
+    updateUI();
 }
 
 function resetScore() {
@@ -141,8 +186,8 @@ function updateScoreDisplay() {
     scoreDraw.textContent = scores.draw;
 }
 
-// Handle Enter key in input fields
-document.addEventListener('DOMContentLoaded', function() {
+// Handle Enter key in input fields - FIXED DUPLICATION
+function setupKeyboardListeners() {
     document.getElementById('playerXInput').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             document.getElementById('playerOInput').focus();
@@ -154,21 +199,25 @@ document.addEventListener('DOMContentLoaded', function() {
             startNewGame();
         }
     });
-});
+}
 
-// Handle Enter key in input fields
+// Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('playerXInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            document.getElementById('playerOInput').focus();
-        }
-    });
-
-    document.getElementById('playerOInput').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            startNewGame();
-        }
-    });
+    setupKeyboardListeners();
+    initializeGame();
 });
 
-initializeGame();
+// Export functions for testing (if in Node.js environment)
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        checkWinner,
+        isValidMove,
+        makeMove,
+        checkGameEnd,
+        board,
+        currentPlayer,
+        gameActive,
+        scores,
+        playerNames
+    };
+}
