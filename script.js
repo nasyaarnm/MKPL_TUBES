@@ -57,11 +57,9 @@ function startNewGame() {
     playerNames.X = playerXInput || 'Player X';
     playerNames.O = playerOInput || 'Player O';
 
-    // Update player names in score display
     playerXName.textContent = playerNames.X;
     playerOName.textContent = playerNames.O;
 
-    // Close modal and reset game
     playerNamesModal.style.display = 'none';
     resetGame();
 }
@@ -173,13 +171,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Fungsi ini belum ada test dan akan menurunkan coverage
-// function calculateBonus(player) {
-//     if (scores[player] >= 10) {
-//         return 500;
-//     }
-//     return 0;
-// }
-
-// Initialize the game when the page loads
 initializeGame();
