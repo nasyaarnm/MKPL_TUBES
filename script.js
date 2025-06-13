@@ -57,11 +57,9 @@ function startNewGame() {
     playerNames.X = playerXInput || 'Player X';
     playerNames.O = playerOInput || 'Player O';
 
-    // Update player names in score display
     playerXName.textContent = playerNames.X;
     playerOName.textContent = playerNames.O;
 
-    // Close modal and reset game
     playerNamesModal.style.display = 'none';
     resetGame();
 }
@@ -158,5 +156,19 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Initialize the game when the page loads
+// Handle Enter key in input fields
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('playerXInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            document.getElementById('playerOInput').focus();
+        }
+    });
+
+    document.getElementById('playerOInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            startNewGame();
+        }
+    });
+});
+
 initializeGame();
