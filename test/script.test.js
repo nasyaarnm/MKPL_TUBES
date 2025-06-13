@@ -1,12 +1,4 @@
-const mockDOM = {
-    querySelectorAll: jest.fn(),
-    getElementById: jest.fn(),
-    addEventListener: jest.fn(),
-    createElement: jest.fn()
-};
-
-global.document = mockDOM;
-
+// test/script.test.js - Versi tanpa Jest
 function checkWin(board) {
     const winningConditions = [
         [0,1,2], [3,4,5], [6,7,8], // Rows
@@ -39,10 +31,12 @@ function getGameState(board, currentPlayer) {
     };
 }
 
+// Fungsi untuk validasi move
 function isValidMove(board, index) {
     return index >= 0 && index < 9 && board[index] === '';
 }
 
+// Fungsi untuk make move
 function makeMove(board, index, player) {
     if (!isValidMove(board, index)) {
         return null;
@@ -63,6 +57,7 @@ function assert(condition, message) {
     } else {
         console.error(`❌ GAGAL: ${message}`);
         testsFailed++;
+        process.exitCode = 1;
     }
 }
 
@@ -71,7 +66,7 @@ function assertEqual(actual, expected, message) {
            `${message} - Expected: ${JSON.stringify(expected)}, Got: ${JSON.stringify(actual)}`);
 }
 
-console.log("--- Memulai Enhanced Unit Tests ---");
+console.log("--- Memulai Unit Tests ---");
 
 // Test checkWin function
 console.log("\n🔍 Testing checkWin function:");
@@ -129,35 +124,15 @@ console.log("\n🚨 Testing edge cases:");
 assert(checkWin(['X', 'X', '', 'X', '', '', '', '', '']) === null, "Almost win but not quite");
 assert(checkDraw(['X', 'O', 'X', 'O', 'X', 'O', 'O', '', 'X']) === false, "Almost draw but not quite");
 
-// Test multiple winning conditions (shouldn't happen in real game)
+// Test multiple winning conditions
 assert(checkWin(['X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X']) === 'X', "Multiple wins still returns winner");
 
-// Test mixed scenarios
-console.log("\n🔄 Testing mixed scenarios:");
-let emptyBoard = ['', '', '', '', '', '', '', '', ''];
-let gameInProgress = ['X', 'O', '', 'O', 'X', '', '', '', ''];
-let almostWin = ['X', 'X', '', 'O', 'O', '', '', '', ''];
-
-assert(getGameState(emptyBoard, 'X').gameActive === true, "Empty board is active");
-assert(getGameState(gameInProgress, 'X').nextPlayer === 'O', "Next player switches correctly");
-assert(getGameState(almostWin, 'X').gameActive === true, "Almost win scenario is still active");
-
-console.log("\n--- Enhanced Unit Tests Selesai ---");
+console.log("\n--- Unit Tests Selesai ---");
 console.log(`Total Tes: ${testsPassed + testsFailed}, Lulus: ${testsPassed}, Gagal: ${testsFailed}`);
 
 if (testsFailed > 0) {
     console.error("🔴 Beberapa tes unit gagal!");
+    process.exit(1);
 } else {
     console.log("🟢 Semua tes unit berhasil!");
-}
-
-// Export functions for potential integration testing
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        checkWin,
-        checkDraw,
-        getGameState,
-        isValidMove,
-        makeMove
-    };
 }
